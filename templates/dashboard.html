@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SHIHAB X HOSTING</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body>
+    <header class="header dashboard-header">
+        <div class="logo">🚀 SHIHAB X HOSTING</div>
+        <nav class="nav">
+            <span>Welcome, {{ session.username }}!</span>
+            <a href="/logout" class="logout-btn">🚪 Logout</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>{{ user.ram }}GB</h3>
+                <p>RAM Allocated</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ user.cpu }}%</h3>
+                <p>CPU Allocated</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ file_count or 0 }}</h3>
+                <p>Files Uploaded</p>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>📤 Upload Your Files</h2>
+            <form method="POST" action="/upload" enctype="multipart/form-data" class="upload-form">
+                <input type="file" name="file" required>
+                <button type="submit" class="btn btn-primary">Upload File</button>
+            </form>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>📁 Your Files</h2>
+            {% if files %}
+            <div class="file-list">
+                {% for file in files %}
+                <div class="file-item">
+                    <span>📄 {{ file.filename }}</span>
+                    <span class="file-date">{{ file.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                    <a href="/download/{{ file.id }}" class="btn btn-secondary">Download</a>
+                    <form method="POST" action="/delete-file/{{ file.id }}" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-files">No files uploaded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

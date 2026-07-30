@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - SHIHAB X HOSTING</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body>
+    <div class="panel-container">
+        <div class="panel-header">
+            <h1>🔧 Admin Panel - SHIHAB X HOSTING</h1>
+            <a href="/logout" class="logout-btn">🚪 Logout</a>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-success">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>{{ users|length }}</h3>
+                <p>Total Users</p>
+            </div>
+            <div class="stat-card">
+                <h3>{{ banned_count }}</h3>
+                <p>Banned Users</p>
+            </div>
+            <div class="stat-card">
+                <h3>20GB</h3>
+                <p>RAM Allocation</p>
+            </div>
+            <div class="stat-card">
+                <h3>100%</h3>
+                <p>CPU Usage</p>
+            </div>
+        </div>
+
+        <!-- Create User -->
+        <div class="panel-section">
+            <h2>👤 Create New User</h2>
+            <form method="POST" action="/admin/create-user" class="form-row">
+                <input type="text" name="username" placeholder="New Username" required>
+                <input type="text" name="password" placeholder="New Password" required>
+                <input type="email" name="email" placeholder="Email (optional)">
+                <input type="number" name="ram" placeholder="RAM (GB)" value="20">
+                <input type="number" name="cpu" placeholder="CPU (%)" value="100">
+                <button type="submit" class="btn-action btn-create">➕ Create User</button>
+            </form>
+        </div>
+
+        <!-- User List with Ban/Unban -->
+        <div class="panel-section">
+            <h2>👥 User Management</h2>
+            <div class="user-list">
+                {% for user in users %}
+                <div class="user-item" data-username="{{ user.username }}">
+                    <span>
+                        <strong>{{ user.username }}</strong> 
+                        ({{ user.email or 'no email' }}) 
+                        - RAM: {{ user.ram }}GB | CPU: {{ user.cpu }}%
+                    </span>
+                    <span class="status {% if user.is_banned %}banned{% else %}active{% endif %}">
+                        {% if user.is_banned %}🚫 Banned{% else %}✅ Active{% endif %}
+                    </span>
+                    <div class="user-actions">
+                        {% if user.is_banned %}
+                        <form method="POST" action="/admin/unban-user" style="display:inline;">
+                            <input type="hidden" name="username" value="{{ user.username }}">
+                            <button type="submit" class="btn-action btn-unban">🔴 Unban</button>
+                        </form>
+                        {% else %}
+                        <form method="POST" action="/admin/ban-user" style="display:inline;">
+                            <input type="hidden" name="username" value="{{ user.username }}">
+                            <button type="submit" class="btn-action btn-ban">🚫 Ban</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Custom Banner -->
+        <div class="panel-section">
+            <h2>🖼️ Custom Banner</h2>
+            <form method="POST" action="/admin/update-banner" class="banner-upload">
+                <input type="text" name="banner_url" placeholder="Enter banner image URL" 
+                       value="{{ banner_url or '' }}">
+                <button type="submit" class="btn-action btn-banner">📸 Update Banner</button>
+            </form>
+            <img src="{{ banner_url or url_for('static', filename='images/banner-default.jpg') }}" 
+                 alt="Banner Preview" class="preview-banner">
+        </div>
+
+        <p class="footer-text">© 2026 SHIHAB X HOSTING - Admin Panel</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

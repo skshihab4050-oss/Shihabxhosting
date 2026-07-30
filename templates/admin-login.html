@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - SHIHAB X HOSTING</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body class="auth-page admin-auth">
+    <div class="auth-container">
+        <div class="auth-box admin-box">
+            <h2>👑 Admin Login</h2>
+            <p class="sub-title">SHIHAB X HOSTING - Admin Panel</p>
+            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="alert alert-error">{{ messages[0] }}</div>
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="/admin-login">
+                <div class="form-group">
+                    <label>Admin Username</label>
+                    <input type="text" name="username" placeholder="Enter admin username" required>
+                </div>
+                <div class="form-group">
+                    <label>Admin Password</label>
+                    <input type="password" name="password" placeholder="Enter admin password" required>
+                </div>
+                <button type="submit" class="btn-login admin-btn-login">Access Admin Panel</button>
+            </form>
+            <a href="/" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
